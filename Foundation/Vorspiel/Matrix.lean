@@ -227,11 +227,11 @@ def appendr {n m} (v : Fin n → α) (w : Fin m → α) : Fin (m + n) → α := 
 
 @[simp] lemma appendr_cons {m n} (x : α) (v : Fin n → α) (w : Fin m → α) : appendr (x :> v) w = x :> appendr v w := by funext i; simp [appendr]
 
-lemma forall_iff {n : ℕ} (φ : (Fin (n + 1) → α) → Prop) :
+lemma vec_forall_iff {n : ℕ} (φ : (Fin (n + 1) → α) → Prop) :
     (∀ v, φ v) ↔ (∀ a, ∀ v, φ (a :> v)) :=
   ⟨fun h a v ↦ h (a :> v), fun h v ↦ by simpa [eq_vecCons v] using h (v 0) (v ∘ Fin.succ)⟩
 
-lemma exists_iff {n : ℕ} (φ : (Fin (n + 1) → α) → Prop) :
+lemma vec_exists_iff {n : ℕ} (φ : (Fin (n + 1) → α) → Prop) :
     (∃ v, φ v) ↔ (∃ a, ∃ v, φ (a :> v)) :=
   ⟨by rintro ⟨v, hv⟩; exact ⟨v 0, v ∘ Fin.succ, by simpa [eq_vecCons] using hv⟩,
    by rintro ⟨a, v, hv⟩; exact ⟨_, hv⟩⟩
@@ -240,11 +240,11 @@ def foldr (f : α → β → β) (init : β) : {k : ℕ} → (Fin k → α) → 
   |     0, _ => init
   | _ + 1, v => f (vecHead v) (Matrix.foldr f init (vecTail v))
 
-def map (f : α → β) : (Fin k → α) → (Fin k → β) := fun v ↦ f ∘ v
+def vecMap (f : α → β) : (Fin k → α) → (Fin k → β) := fun v ↦ f ∘ v
 
 section map
 
-postfix:max "⨟" => map
+postfix:max "⨟" => vecMap
 
 variable (f : α → β)
 
@@ -252,11 +252,11 @@ variable (f : α → β)
 
 @[simp] lemma map_cons (a : α) (v : Fin k → α) : f⨟ (a :> v) = f a :> f⨟ v := by
   ext i
-  cases i using Fin.cases <;> simp [map]
+  cases i using Fin.cases <;> simp [vecMap]
 
 @[simp] lemma map_cons' (v : Fin (k + 1) → α) : f⨟ v = f (vecHead v) :> f⨟ (vecTail v) := by
   ext i
-  cases i using Fin.cases <;> { simp [map]; rfl }
+  cases i using Fin.cases <;> { simp [vecMap]; rfl }
 
 @[simp] lemma map_app (v : Fin k → α) (i : Fin k) : (f⨟ v) i = f (v i) := rfl
 
