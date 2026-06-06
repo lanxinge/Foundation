@@ -15,6 +15,8 @@ namespace Finset
 
 variable {α : Type*} {a b : α} {s : Finset α}
 
+abbrev toSet (s : Finset α) : Set α := s
+
 @[grind =]
 lemma doubleton_subset [DecidableEq α] : ({a, b} : Finset α) ⊆ s ↔ a ∈ s ∧ b ∈ s := by
   constructor;
